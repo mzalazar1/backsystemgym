@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require('express');
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -14,8 +13,8 @@ app.use(express.static("public"));
 //todas las rutas con el prefijo /api
 app.use("/api", require("./src/routes"));
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
+app.get("/", (req, res) => {
+    res.send("Hello World!");
 });
 
 mongoose.connect(process.env.URL)

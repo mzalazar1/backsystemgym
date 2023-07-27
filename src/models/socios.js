@@ -4,14 +4,31 @@ const { Schema } = mongoose;
 
 const SociosSchema = new Schema({
     id: {
+        type: Number,
+        required: true,
+    },
+    dni: {
         type: String,
+        required: true,
     },
     name: {
         type: String,
         required: true,
     },
-    description: {
+    lastname: {
         type: String,
+        required: true,
+    },
+    tel: {
+        type: String,
+        required: true,
+    },
+    mail: {
+        type: String,
+        required: true,
+    },
+    fechaNac: {
+        type: Date,
         required: true,
     },
     isDeleted: {
