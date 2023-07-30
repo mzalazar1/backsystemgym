@@ -48,7 +48,62 @@ const create = async (req, res) => {
 
 };
 
+// UPDATE de socios
+const actualizarSoc = async (req, res) => {
+    const id = req.params.id;
+    const { dni, name, lastname, tel, mail, fechaNac, isDeleted } = req.body;
+    console.log(id);
+
+    let socioAct;
+    try {
+        socioAct = await Socio.updateOne(
+            { "id": id },
+            {
+                $set: {
+                    dni: dni,
+                    name: name,
+                    lastname: lastname,
+                    tel: tel,
+                    mail: mail,
+                    fechaNac: fechaNac,
+                    isDeleted: isDeleted,
+                }
+            }
+        );
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.json({ msg: `Error Update: ${err}` });
+    }
+
+    res.json(socioAct);
+};
+
+// DELETE de socios
+const eliminarSoc = async (req, res) => {
+    const id = req.params.id;
+    let response;
+    try {
+        response = await Socio.deleteOne({ id });
+        console.log(response);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.json({ msg: `Error Delete: ${err}` });
+    }
+    if (response.deletedCount === 0) {
+        return res.json({ msg: `No se encontro socio con id: ${id}` });
+    }
+
+    return res.json({ msg: `El socio borrado ${id}` });
+}
+
+
 module.exports = {
     getAll,
     create,
+    actualizarSoc,
+    eliminarSoc,
 };
