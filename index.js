@@ -1,5 +1,9 @@
 const express = require('express');
+const route = require('routers')
 const mongoose = require("mongoose");
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, './.env') });
+const router = require("./src/routes")
 const cors = require("cors");
 require("dotenv").config();
 
@@ -7,8 +11,20 @@ const app = express();
 
 app.use(express.json());
 app.set("json spaces", 2);
-app.use(cors());
+app.use(router)
 app.use(express.static("public"));
+
+////////////////////////////////////////////
+
+app.options('*', cors());
+app.use(cors());
+
+/////////////////////////////////////////////////////
+
+app.get('/favicon.ico', (req, res) => {
+    // Devuelve una respuesta vacía o un ícono de favicon predefinido
+});
+
 
 //todas las rutas con el prefijo /api
 app.use("/api", require("./src/routes"));

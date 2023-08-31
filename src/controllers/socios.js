@@ -1,5 +1,10 @@
 const Socio = require("../models/socios");
 
+const getStatus = (req, res) => {
+    Socio.find()
+        .then((response) => res.status(200).json({ msg: "Connection OK" }))
+        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+}
 
 // Devuelve todos los socios
 const getAll = async (req, res) => {
@@ -17,6 +22,14 @@ const getAll = async (req, res) => {
     // solo devolvemos los socios si no se entro al catch
     res.json(socios);
 };
+
+//GET by ID
+const getSocioById = (req, res) => {
+    const { SocioId } = req.params;
+    Products.find({ id: SocioId })
+        .then((data) => res.json({ data }))
+        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+}
 
 //POST
 
@@ -103,6 +116,7 @@ const eliminarSoc = async (req, res) => {
 
 module.exports = {
     getAll,
+    getSocioById,
     create,
     actualizarSoc,
     eliminarSoc,
