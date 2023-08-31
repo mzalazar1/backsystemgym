@@ -115,6 +115,7 @@ const eliminarSoc = async (req, res) => {
 
 
 module.exports = {
+    getStatus,
     getAll,
     getSocioById,
     create,
