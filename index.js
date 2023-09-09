@@ -31,7 +31,7 @@ app.use("/api", require("./src/routes"));
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
-
+console.log(process.env.URL);
 mongoose.connect(process.env.URL)
     .then(() => {
         console.log("🟢 DB Connected");
