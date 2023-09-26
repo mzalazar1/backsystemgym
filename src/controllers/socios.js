@@ -35,7 +35,7 @@ const getSocioById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, dni, name, lastname, tel, mail, fechaNac, isDeleted } = req.body;
+    const { id, dni, name, lastname, tel, mail, fechaNac } = req.body;
 
     const socio = new Socio({
         id,
@@ -45,7 +45,7 @@ const create = async (req, res) => {
         tel,
         mail,
         fechaNac,
-        isDeleted,
+
     });
     let savedSocio;
     try {
@@ -64,7 +64,7 @@ const create = async (req, res) => {
 // UPDATE de socios
 const actualizarSoc = async (req, res) => {
     const id = req.params.id;
-    const { dni, name, lastname, tel, mail, fechaNac, isDeleted } = req.body;
+    const { dni, name, lastname, tel, mail, fechaNac, } = req.body;
     console.log(id);
 
     let socioAct;
@@ -79,7 +79,7 @@ const actualizarSoc = async (req, res) => {
                     tel: tel,
                     mail: mail,
                     fechaNac: fechaNac,
-                    isDeleted: isDeleted,
+
                 }
             }
         );
