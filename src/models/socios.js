@@ -28,7 +28,7 @@ const SociosSchema = new Schema({
         required: true,
     },
     fechaNac: {
-        type: Date,
+        type: String,
         required: true,
     },
     isDeleted: {
