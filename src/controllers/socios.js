@@ -64,7 +64,7 @@ const create = async (req, res) => {
 // UPDATE de socios
 const actualizarSoc = async (req, res) => {
     const id = req.params.id;
-    const { dni, name, lastname, tel, mail, fechaNac, } = req.body;
+    const { dni, name, lastname, tel, mail, fechaNac } = req.body;
     console.log(id);
 
     let socioAct;
@@ -78,8 +78,7 @@ const actualizarSoc = async (req, res) => {
                     lastname: lastname,
                     tel: tel,
                     mail: mail,
-                    fechaNac: fechaNac,
-
+                    fechaNac: fechaNac
                 }
             }
         );
