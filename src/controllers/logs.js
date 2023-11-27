@@ -1,32 +1,32 @@
-const Socio = require("../models/socios");
+const Log = require("../models/logs");
 
 const getStatus = (req, res) => {
-    Socio.find()
+    Log.find()
         .then((response) => res.status(200).json({ msg: "Connection OK" }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
 
-// Devuelve todos los socios
+// Devuelve todos los logs
 const getAll = async (req, res) => {
 
-    let socios = [];
+    let logs = [];
 
     try {
-        socios = await Socio.find({})
+        logs = await Log.find({})
     } catch (error) {
         console.log(error);
         res.status(500);
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolvemos los socios si no se entro al catch
-    res.json(socios);
+    // solo devolv./models si no se entro al catch
+    res.json(logs);
 };
 
 //GET by ID
-const getSocioById = (req, res) => {
-    const { SocioId } = req.params;
-    Socio.find({ id: SocioId })
+const getLogById = (req, res) => {
+    const { LogId } = req.params;
+    Log.find({ id: LogId })
         .then((data) => res.json({ data }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
@@ -35,21 +35,18 @@ const getSocioById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { id, accion, usuario, fecha, hora } = req.body;
 
-    const socio = new Socio({
+    const log = new Log({
         id,
-        dni,
-        name,
-        lastname,
-        tel,
-        mail,
-        fechaNac,
-
+        accion,
+        usuario,
+        fecha,
+        hora
     });
-    let savedSocio;
+    let logSocio;
     try {
-        savedSocio = await socio.save();
+        logSocio = await log.save();
     }
     catch (err) {
         console.log(err);
@@ -57,28 +54,26 @@ const create = async (req, res) => {
         res.json({ msg: `Error Post: ${err}` });
     }
 
-    res.json(savedSocio);
+    res.json(logSocio);
 
 };
 
-// UPDATE de socios
-const actualizarSoc = async (req, res) => {
+// UPDATE de Log
+const actualizarLog = async (req, res) => {
     const id = req.params.id;
-    const { dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { accion, usuario, fecha, hora } = req.body;
     console.log(id);
 
-    let socioAct;
+    let logAct;
     try {
-        socioAct = await Socio.updateOne(
+        logAct = await Log.updateOne(
             { "id": id },
             {
                 $set: {
-                    dni: dni,
-                    name: name,
-                    lastname: lastname,
-                    tel: tel,
-                    mail: mail,
-                    fechaNac: fechaNac
+                    accion: accion,
+                    usuario: usuario,
+                    fecha: fecha,
+                    hora: hora
                 }
             }
         );
@@ -89,15 +84,15 @@ const actualizarSoc = async (req, res) => {
         res.json({ msg: `Error Update: ${err}` });
     }
 
-    res.json(socioAct);
+    res.json(logAct);
 };
 
-// DELETE de socios
-const eliminarSoc = async (req, res) => {
+// DELETE de Log
+const eliminarLog = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await Socio.deleteOne({ id });
+        response = await Log.deleteOne({ id });
         console.log(response);
     }
     catch (err) {
@@ -106,18 +101,18 @@ const eliminarSoc = async (req, res) => {
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro socio con id: ${id}` });
+        return res.json({ msg: `No se encontro log con id: ${id}` });
     }
 
-    return res.json({ msg: `El socio borrado ${id}` });
+    return res.json({ msg: `El log fue borrado ${id}` });
 }
 
 
 module.exports = {
     getStatus,
     getAll,
-    getSocioById,
+    getLogById,
     create,
-    actualizarSoc,
-    eliminarSoc,
+    actualizarLog,
+    eliminarLog,
 };

@@ -1,32 +1,32 @@
-const Socio = require("../models/socios");
+const EstadoCuota = require("../models/estadosCuotas");
 
 const getStatus = (req, res) => {
-    Socio.find()
+    EstadoCuota.find()
         .then((response) => res.status(200).json({ msg: "Connection OK" }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
 
-// Devuelve todos los socios
+// Devuelve todos los estadosCuotas
 const getAll = async (req, res) => {
 
-    let socios = [];
+    let estadosCuotas = [];
 
     try {
-        socios = await Socio.find({})
+        estadosCuotas = await EstadoCuota.find({})
     } catch (error) {
         console.log(error);
         res.status(500);
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolvemos los socios si no se entro al catch
-    res.json(socios);
+    // solo devolvemos los estadosCuotas si no se entro al catch
+    res.json(estadosCuotas);
 };
 
 //GET by ID
-const getSocioById = (req, res) => {
-    const { SocioId } = req.params;
-    Socio.find({ id: SocioId })
+const getEstadoCuotaById = (req, res) => {
+    const { EstadoCuotaId } = req.params;
+    EstadoCuota.find({ id: EstadoCuotaId })
         .then((data) => res.json({ data }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
@@ -35,21 +35,15 @@ const getSocioById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { id, estadoActual } = req.body;
 
-    const socio = new Socio({
+    const estadoCuota = new EstadoCuota({
         id,
-        dni,
-        name,
-        lastname,
-        tel,
-        mail,
-        fechaNac,
-
+        estadoActual
     });
-    let savedSocio;
+    let EstadoCuotaSocio;
     try {
-        savedSocio = await socio.save();
+        EstadoCuotaSocio = await estadoCuota.save();
     }
     catch (err) {
         console.log(err);
@@ -57,28 +51,23 @@ const create = async (req, res) => {
         res.json({ msg: `Error Post: ${err}` });
     }
 
-    res.json(savedSocio);
+    res.json(EstadoCuotaSocio);
 
 };
 
-// UPDATE de socios
-const actualizarSoc = async (req, res) => {
+// UPDATE de EstadoCuota
+const actualizarEstadoCuota = async (req, res) => {
     const id = req.params.id;
-    const { dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { estadoActual } = req.body;
     console.log(id);
 
-    let socioAct;
+    let estadoCuotaAct;
     try {
-        socioAct = await Socio.updateOne(
+        estadoCuotaAct = await EstadoCuota.updateOne(
             { "id": id },
             {
                 $set: {
-                    dni: dni,
-                    name: name,
-                    lastname: lastname,
-                    tel: tel,
-                    mail: mail,
-                    fechaNac: fechaNac
+                    estadoActual: estadoActual
                 }
             }
         );
@@ -89,15 +78,15 @@ const actualizarSoc = async (req, res) => {
         res.json({ msg: `Error Update: ${err}` });
     }
 
-    res.json(socioAct);
+    res.json(estadoCuotaAct);
 };
 
-// DELETE de socios
-const eliminarSoc = async (req, res) => {
+// DELETE de EstadoCuota
+const eliminarEstadoCuota = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await Socio.deleteOne({ id });
+        response = await EstadoCuota.deleteOne({ id });
         console.log(response);
     }
     catch (err) {
@@ -106,18 +95,18 @@ const eliminarSoc = async (req, res) => {
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro socio con id: ${id}` });
+        return res.json({ msg: `No se encontro estadoCuota con id: ${id}` });
     }
 
-    return res.json({ msg: `El socio borrado ${id}` });
+    return res.json({ msg: `El estadoCuota borrado ${id}` });
 }
 
 
 module.exports = {
     getStatus,
     getAll,
-    getSocioById,
+    getEstadoCuotaById,
     create,
-    actualizarSoc,
-    eliminarSoc,
+    actualizarEstadoCuota,
+    eliminarEstadoCuota,
 };

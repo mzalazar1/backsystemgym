@@ -1,32 +1,32 @@
-const Socio = require("../models/socios");
+const Rol = require("../models/roles");
 
 const getStatus = (req, res) => {
-    Socio.find()
+    Rol.find()
         .then((response) => res.status(200).json({ msg: "Connection OK" }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
 
-// Devuelve todos los socios
+// Devuelve todos los Roles
 const getAll = async (req, res) => {
 
-    let socios = [];
+    let roles = [];
 
     try {
-        socios = await Socio.find({})
+        roles = await Rol.find({})
     } catch (error) {
         console.log(error);
         res.status(500);
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolvemos los socios si no se entro al catch
-    res.json(socios);
+    // solo devolv./models si no se entro al catch
+    res.json(roles);
 };
 
 //GET by ID
-const getSocioById = (req, res) => {
-    const { SocioId } = req.params;
-    Socio.find({ id: SocioId })
+const getRolById = (req, res) => {
+    const { RolId } = req.params;
+    Rol.find({ id: RolId })
         .then((data) => res.json({ data }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
@@ -35,21 +35,16 @@ const getSocioById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { id, usuario, rol } = req.body;
 
-    const socio = new Socio({
+    const roles = new Rol({
         id,
-        dni,
-        name,
-        lastname,
-        tel,
-        mail,
-        fechaNac,
-
+        usuario,
+        rol
     });
-    let savedSocio;
+    let rolUsuario;
     try {
-        savedSocio = await socio.save();
+        rolUsuario = await roles.save();
     }
     catch (err) {
         console.log(err);
@@ -57,28 +52,24 @@ const create = async (req, res) => {
         res.json({ msg: `Error Post: ${err}` });
     }
 
-    res.json(savedSocio);
+    res.json(rolUsuario);
 
 };
 
-// UPDATE de socios
-const actualizarSoc = async (req, res) => {
+// UPDATE de Rol
+const actualizarRol = async (req, res) => {
     const id = req.params.id;
-    const { dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { usuario, rol } = req.body;
     console.log(id);
 
-    let socioAct;
+    let rolAct;
     try {
-        socioAct = await Socio.updateOne(
+        rolAct = await Rol.updateOne(
             { "id": id },
             {
                 $set: {
-                    dni: dni,
-                    name: name,
-                    lastname: lastname,
-                    tel: tel,
-                    mail: mail,
-                    fechaNac: fechaNac
+                    usuario: usuario,
+                    rol: rol
                 }
             }
         );
@@ -89,15 +80,15 @@ const actualizarSoc = async (req, res) => {
         res.json({ msg: `Error Update: ${err}` });
     }
 
-    res.json(socioAct);
+    res.json(rolAct);
 };
 
-// DELETE de socios
-const eliminarSoc = async (req, res) => {
+// DELETE de Rol
+const eliminarRol = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await Socio.deleteOne({ id });
+        response = await Rol.deleteOne({ id });
         console.log(response);
     }
     catch (err) {
@@ -106,18 +97,18 @@ const eliminarSoc = async (req, res) => {
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro socio con id: ${id}` });
+        return res.json({ msg: `No se encontro rol con id: ${id}` });
     }
 
-    return res.json({ msg: `El socio borrado ${id}` });
+    return res.json({ msg: `El rol fue borrado ${id}` });
 }
 
 
 module.exports = {
     getStatus,
     getAll,
-    getSocioById,
+    getRolById,
     create,
-    actualizarSoc,
-    eliminarSoc,
+    actualizarRol,
+    eliminarRol,
 };

@@ -1,32 +1,32 @@
-const Socio = require("../models/socios");
+const ValorCuota = require("../models/valoresCuotas");
 
 const getStatus = (req, res) => {
-    Socio.find()
+    ValorCuota.find()
         .then((response) => res.status(200).json({ msg: "Connection OK" }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
 
-// Devuelve todos los socios
+// Devuelve todos los valoresCuotas
 const getAll = async (req, res) => {
 
-    let socios = [];
+    let valoresCuotas = [];
 
     try {
-        socios = await Socio.find({})
+        valoresCuotas = await ValorCuota.find({})
     } catch (error) {
         console.log(error);
         res.status(500);
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolvemos los socios si no se entro al catch
-    res.json(socios);
+    // solo devolv./models si no se entro al catch
+    res.json(valoresCuotas);
 };
 
 //GET by ID
-const getSocioById = (req, res) => {
-    const { SocioId } = req.params;
-    Socio.find({ id: SocioId })
+const getValorCuotaById = (req, res) => {
+    const { ValorCuotaId } = req.params;
+    ValorCuota.find({ id: ValorCuotaId })
         .then((data) => res.json({ data }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
@@ -35,21 +35,16 @@ const getSocioById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { id, mes, importe } = req.body;
 
-    const socio = new Socio({
+    const valorCuota = new ValorCuota({
         id,
-        dni,
-        name,
-        lastname,
-        tel,
-        mail,
-        fechaNac,
-
+        mes,
+        importe
     });
-    let savedSocio;
+    let ValorCuotaSocio;
     try {
-        savedSocio = await socio.save();
+        ValorCuotaSocio = await valorCuota.save();
     }
     catch (err) {
         console.log(err);
@@ -57,28 +52,24 @@ const create = async (req, res) => {
         res.json({ msg: `Error Post: ${err}` });
     }
 
-    res.json(savedSocio);
+    res.json(ValorCuotaSocio);
 
 };
 
-// UPDATE de socios
-const actualizarSoc = async (req, res) => {
+// UPDATE de ValorCuota
+const actualizarValorCuota = async (req, res) => {
     const id = req.params.id;
-    const { dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { mes, importe } = req.body;
     console.log(id);
 
-    let socioAct;
+    let valorCuotaAct;
     try {
-        socioAct = await Socio.updateOne(
+        valorCuotaAct = await ValorCuota.updateOne(
             { "id": id },
             {
                 $set: {
-                    dni: dni,
-                    name: name,
-                    lastname: lastname,
-                    tel: tel,
-                    mail: mail,
-                    fechaNac: fechaNac
+                    mes: mes,
+                    importe: importe
                 }
             }
         );
@@ -89,15 +80,15 @@ const actualizarSoc = async (req, res) => {
         res.json({ msg: `Error Update: ${err}` });
     }
 
-    res.json(socioAct);
+    res.json(valorCuotaAct);
 };
 
-// DELETE de socios
-const eliminarSoc = async (req, res) => {
+// DELETE de ValorCuota
+const eliminarValorCuota = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await Socio.deleteOne({ id });
+        response = await ValorCuota.deleteOne({ id });
         console.log(response);
     }
     catch (err) {
@@ -106,18 +97,18 @@ const eliminarSoc = async (req, res) => {
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro socio con id: ${id}` });
+        return res.json({ msg: `No se encontro Valorcuota con id: ${id}` });
     }
 
-    return res.json({ msg: `El socio borrado ${id}` });
+    return res.json({ msg: `El valor cuota fue borrado ${id}` });
 }
 
 
 module.exports = {
     getStatus,
     getAll,
-    getSocioById,
+    getValorCuotaById,
     create,
-    actualizarSoc,
-    eliminarSoc,
+    actualizarValorCuota,
+    eliminarValorCuota,
 };

@@ -1,32 +1,32 @@
-const Socio = require("../models/socios");
+const Actividad = require("../models/actividades");
 
 const getStatus = (req, res) => {
-    Socio.find()
+    Actividad.find()
         .then((response) => res.status(200).json({ msg: "Connection OK" }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
 
-// Devuelve todos los socios
+// Devuelve todos los actividades
 const getAll = async (req, res) => {
 
-    let socios = [];
+    let actividades = [];
 
     try {
-        socios = await Socio.find({})
+        actividades = await Actividad.find({})
     } catch (error) {
         console.log(error);
         res.status(500);
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolvemos los socios si no se entro al catch
-    res.json(socios);
+    // solo devolvemos los actividades si no se entro al catch
+    res.json(actividades);
 };
 
 //GET by ID
-const getSocioById = (req, res) => {
-    const { SocioId } = req.params;
-    Socio.find({ id: SocioId })
+const getActividadById = (req, res) => {
+    const { ActividadId } = req.params;
+    Actividad.find({ id: ActividadId })
         .then((data) => res.json({ data }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
@@ -35,21 +35,17 @@ const getSocioById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { id, nombre, horarios, profesor } = req.body;
 
-    const socio = new Socio({
+    const actividad = new Actividad({
         id,
-        dni,
-        name,
-        lastname,
-        tel,
-        mail,
-        fechaNac,
-
+        nombre,
+        horarios,
+        profesor
     });
-    let savedSocio;
+    let ActividadSocio;
     try {
-        savedSocio = await socio.save();
+        ActividadSocio = await actividad.save();
     }
     catch (err) {
         console.log(err);
@@ -57,28 +53,25 @@ const create = async (req, res) => {
         res.json({ msg: `Error Post: ${err}` });
     }
 
-    res.json(savedSocio);
+    res.json(ActividadSocio);
 
 };
 
-// UPDATE de socios
-const actualizarSoc = async (req, res) => {
+// UPDATE de Actividad
+const actualizarActividad = async (req, res) => {
     const id = req.params.id;
-    const { dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { nombre, horarios, profesor } = req.body;
     console.log(id);
 
-    let socioAct;
+    let ActividadAct;
     try {
-        socioAct = await Socio.updateOne(
+        ActividadAct = await Actividad.updateOne(
             { "id": id },
             {
                 $set: {
-                    dni: dni,
-                    name: name,
-                    lastname: lastname,
-                    tel: tel,
-                    mail: mail,
-                    fechaNac: fechaNac
+                    nombre: nombre,
+                    horarios: horarios,
+                    profesor: profesor
                 }
             }
         );
@@ -89,15 +82,15 @@ const actualizarSoc = async (req, res) => {
         res.json({ msg: `Error Update: ${err}` });
     }
 
-    res.json(socioAct);
+    res.json(ActividadAct);
 };
 
-// DELETE de socios
-const eliminarSoc = async (req, res) => {
+// DELETE de Actividad
+const eliminarActividad = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await Socio.deleteOne({ id });
+        response = await Actividad.deleteOne({ id });
         console.log(response);
     }
     catch (err) {
@@ -106,18 +99,18 @@ const eliminarSoc = async (req, res) => {
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro socio con id: ${id}` });
+        return res.json({ msg: `No se encontro actividad con id: ${id}` });
     }
 
-    return res.json({ msg: `El socio borrado ${id}` });
+    return res.json({ msg: `La actividad fue borrada ${id}` });
 }
 
 
 module.exports = {
     getStatus,
     getAll,
-    getSocioById,
+    getActividadById,
     create,
-    actualizarSoc,
-    eliminarSoc,
+    actualizarActividad,
+    eliminarActividad,
 };
