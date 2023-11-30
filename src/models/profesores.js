@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const UsuariosSchema = new Schema({
+const ProfesoresSchema = new Schema({
     id: {
         type: Number,
         required: true,
@@ -19,11 +19,19 @@ const UsuariosSchema = new Schema({
         type: String,
         required: true,
     },
+    tel: {
+        type: String,
+        required: true,
+    },
     mail: {
+        type: String,
+        required: true,
+    },
+    fechaNac: {
         type: String,
         required: true,
     }
 
 });
 
-module.exports = mongoose.model("Usuario", UsuariosSchema);
+module.exports = mongoose.model("Profesor", ProfesoresSchema);

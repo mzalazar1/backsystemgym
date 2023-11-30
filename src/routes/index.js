@@ -8,9 +8,10 @@ const valoresCuotasRoutes = require("./valoresCuotas");
 const pagosRoutes = require("./pagos");
 const tiposCuotasRoutes = require("./tiposCuotas");
 const cuotasRoutes = require("./cuotas");
-const usuariosRoutes = require("./usuarios");
+const empleadosRoutes = require("./empleados");
 const logsRoutes = require("./logs");
 const rolesRoutes = require("./roles");
+const profesoresRoutes = require("./profesores");
 
 // => /api...
 router.use("/socios", sociosRoutes);
@@ -20,9 +21,9 @@ router.use("/valorescuota", valoresCuotasRoutes);
 router.use("/pagos", pagosRoutes);
 router.use("/tiposcuota", tiposCuotasRoutes);
 router.use("/cuotas", cuotasRoutes);
-router.use("/usuarios", usuariosRoutes);
+router.use("/empleados", empleadosRoutes);
 router.use("/logs", logsRoutes);
 router.use("/roles", rolesRoutes);
-
+router.use("/profesores", profesoresRoutes);
 
 module.exports = router;

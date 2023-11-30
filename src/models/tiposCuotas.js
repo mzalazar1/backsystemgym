@@ -7,13 +7,8 @@ const TiposCuotasSchema = new Schema({
         type: Number,
         required: true,
     },
-    descripcion: {
+    tipo: {
         type: String,
-        required: true,
-    },
-
-    importe: {
-        type: Number,
         required: true,
     }
 

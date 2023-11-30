@@ -1,32 +1,32 @@
-const Usuario = require("../models/usuarios");
+const Empleado = require("../models/empleados");
 
 const getStatus = (req, res) => {
-    Usuario.find()
+    Empleados.find()
         .then((response) => res.status(200).json({ msg: "Connection OK" }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
 
-// Devuelve todos los Usuarios
+// Devuelve todos los Empleadoss
 const getAll = async (req, res) => {
 
-    let usuarios = [];
+    let empleado = [];
 
     try {
-        usuarios = await Usuario.find({})
+        empleados = await Empleado.find({})
     } catch (error) {
         console.log(error);
         res.status(500);
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolvemos los usuarios si no se entro al catch
-    res.json(usuarios);
+    // solo devolvemos los empleado si no se entro al catch
+    res.json(empleado);
 };
 
 //GET by ID
-const getUsuarioById = (req, res) => {
-    const { UsuarioId } = req.params;
-    Usuario.find({ id: UsuarioId })
+const getEmpleadoById = (req, res) => {
+    const { EmpleadoId } = req.params;
+    Empleado.find({ id: EmpleadoId })
         .then((data) => res.json({ data }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
@@ -37,16 +37,16 @@ const create = async (req, res) => {
 
     const { id, dni, name, lastname, mail } = req.body;
 
-    const usuario = new Usuario({
+    const empleado = new Empleado({
         id,
         dni,
         name,
         lastname,
         mail
     });
-    let savedUsuario;
+    let savedEmpleado;
     try {
-        savedUsuario = await usuario.save();
+        savedEmpleado = await empleado.save();
     }
     catch (err) {
         console.log(err);
@@ -54,19 +54,19 @@ const create = async (req, res) => {
         res.json({ msg: `Error Post: ${err}` });
     }
 
-    res.json(savedUsuario);
+    res.json(savedEmpleado);
 
 };
 
-// UPDATE de usuarios
-const actualizarUsu = async (req, res) => {
+// UPDATE de Empleados
+const actualizarEmp = async (req, res) => {
     const id = req.params.id;
     const { dni, name, lastname, mail } = req.body;
     console.log(id);
 
-    let usuarioAct;
+    let empleadoAct;
     try {
-        usuarioAct = await Usuario.updateOne(
+        empleadoAct = await Empleado.updateOne(
             { "id": id },
             {
                 $set: {
@@ -84,15 +84,15 @@ const actualizarUsu = async (req, res) => {
         res.json({ msg: `Error Update: ${err}` });
     }
 
-    res.json(usuarioAct);
+    res.json(empleadoAct);
 };
 
-// DELETE de usuario
-const eliminarUsu = async (req, res) => {
+// DELETE de empleado
+const eliminarEmp = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await Usuario.deleteOne({ id });
+        response = await Empleado.deleteOne({ id });
         console.log(response);
     }
     catch (err) {
@@ -101,18 +101,18 @@ const eliminarUsu = async (req, res) => {
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro usuario con id: ${id}` });
+        return res.json({ msg: `No se encontro empleado con id: ${id}` });
     }
 
-    return res.json({ msg: `El usuario borrado ${id}` });
+    return res.json({ msg: `El empleado borrado ${id}` });
 }
 
 
 module.exports = {
     getStatus,
     getAll,
-    getUsuarioById,
+    getEmpleadoById,
     create,
-    actualizarUsu,
-    eliminarUsu,
+    actualizarEmp,
+    eliminarEmp,
 };
