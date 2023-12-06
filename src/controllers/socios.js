@@ -12,7 +12,8 @@ const getAll = async (req, res) => {
     let socios = [];
 
     try {
-        socios = await Socio.find({})
+        socios = await Socio.find({}, { isDeleted: 0, __v: 0, _id: 0 })
+        console.log("🚀 ~ file: socios.js:16 ~ getAll ~ socios:", socios)
     } catch (error) {
         console.log(error);
         res.status(500);

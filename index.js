@@ -16,8 +16,11 @@ app.use(express.static("public"));
 
 ////////////////////////////////////////////
 
-app.options('*', cors());
-app.use(cors());
+// // app.options('*', cors());
+// app.use(cors({ origin: '*' }));
+app.use(cors({
+    origin: ['http://localhost:3000']
+}));
 
 /////////////////////////////////////////////////////
 
