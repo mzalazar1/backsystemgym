@@ -9,7 +9,7 @@ const getStatus = (req, res) => {
 // Devuelve todos los Empleadoss
 const getAll = async (req, res) => {
 
-    let empleado = [];
+    let empleados = [];
 
     try {
         empleados = await Empleado.find({})
@@ -20,7 +20,7 @@ const getAll = async (req, res) => {
     }
 
     // solo devolvemos los empleado si no se entro al catch
-    res.json(empleado);
+    res.json(empleados);
 };
 
 //GET by ID
