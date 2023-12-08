@@ -1,7 +1,7 @@
 const Empleado = require("../models/empleados");
 
 const getStatus = (req, res) => {
-    Empleados.find()
+    Empleado.find()
         .then((response) => res.status(200).json({ msg: "Connection OK" }))
         .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
 }
@@ -35,14 +35,16 @@ const getEmpleadoById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, dni, name, lastname, mail } = req.body;
+    const { id, dni, name, lastname, mail, fechaNac, rol } = req.body;
 
     const empleado = new Empleado({
         id,
         dni,
         name,
         lastname,
-        mail
+        mail,
+        fechaNac,
+        rol
     });
     let savedEmpleado;
     try {
