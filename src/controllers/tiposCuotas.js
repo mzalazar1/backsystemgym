@@ -35,11 +35,11 @@ const getTipoCuotaById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, descripcion, importe } = req.body;
+    const { id, tipo, importe } = req.body;
 
     const TiposCuota = new TipoCuota({
         id,
-        descripcion,
+        tipo,
         importe
     });
     let TipoCuotaSocio;
@@ -59,7 +59,7 @@ const create = async (req, res) => {
 // UPDATE de TipoCuota
 const actualizarTipoCuota = async (req, res) => {
     const id = req.params.id;
-    const { descripcion, importe } = req.body;
+    const { tipo, importe } = req.body;
     console.log(id);
 
     let TipoCuotaAct;
@@ -68,7 +68,7 @@ const actualizarTipoCuota = async (req, res) => {
             { "id": id },
             {
                 $set: {
-                    descripcion: descripcion,
+                    tipo: tipo,
                     importe: importe
                 }
             }

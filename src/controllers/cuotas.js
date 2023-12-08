@@ -61,7 +61,7 @@ const create = async (req, res) => {
 };
 
 // UPDATE de cuota
-const actualizarCuota = async (req, res) => {
+actualizarCuota = async (req, res) => {
     const id = req.params.id;
     const { socio, estado, actividad, fechaPago, tipo, valor } = req.body;
     console.log(id);
