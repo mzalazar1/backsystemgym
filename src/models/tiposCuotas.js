@@ -10,6 +10,10 @@ const TiposCuotasSchema = new Schema({
     tipo: {
         type: String,
         required: true,
+    },
+    importe: {
+        type: Number,
+        required: true,
     }
 
 });
