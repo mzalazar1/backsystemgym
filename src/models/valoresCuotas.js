@@ -11,12 +11,18 @@ const ValoresCuotasSchema = new Schema({
         type: String,
         required: true,
     },
-
     importe: {
         type: Number,
         required: true,
+    },
+    tipo: {
+        type: String,
+        required: true,
     }
 
-});
+
+}
+    ,
+    { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } });
 
 module.exports = mongoose.model("ValorCuota", ValoresCuotasSchema);

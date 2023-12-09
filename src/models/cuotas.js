@@ -11,15 +11,7 @@ const CuotasSchema = new Schema({
         type: String,
         required: true,
     },
-    estado: {
-        type: String,
-        required: true,
-    },
     actividad: {
-        type: String,
-        required: true,
-    },
-    fechaPago: {
         type: String,
         required: true,
     },
@@ -32,6 +24,8 @@ const CuotasSchema = new Schema({
         default: false,
     }
 
-});
+}
+    ,
+    { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } });
 
 module.exports = mongoose.model("Cuota", CuotasSchema); 

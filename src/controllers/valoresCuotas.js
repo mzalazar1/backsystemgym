@@ -35,13 +35,9 @@ const getValorCuotaById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, mes, importe } = req.body;
+    const payload = req.body;
 
-    const valorCuota = new ValorCuota({
-        id,
-        mes,
-        importe
-    });
+    const valorCuota = new ValorCuota({ ...payload });
     let ValorCuotaSocio;
     try {
         ValorCuotaSocio = await valorCuota.save();
@@ -59,7 +55,7 @@ const create = async (req, res) => {
 // UPDATE de ValorCuota
 const actualizarValorCuota = async (req, res) => {
     const id = req.params.id;
-    const { mes, importe } = req.body;
+    const payload = req.body;
     console.log(id);
 
     let valorCuotaAct;
@@ -67,10 +63,7 @@ const actualizarValorCuota = async (req, res) => {
         valorCuotaAct = await ValorCuota.updateOne(
             { "id": id },
             {
-                $set: {
-                    mes: mes,
-                    importe: importe
-                }
+                $set: { ...payload }
             }
         );
     }

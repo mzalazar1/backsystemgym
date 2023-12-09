@@ -35,14 +35,12 @@ const getCuotaById = (req, res) => {
 
 const create = async (req, res) => {
 
-    const { id, socio, estado, actividad, fechaPago, tipo, valor } = req.body;
+    const { id, socio, actividad, tipo, valor } = req.body;
 
     const cuota = new Cuota({
         id,
         socio,
-        estado,
         actividad,
-        fechaPago,
         tipo,
         valor
     });
@@ -63,7 +61,7 @@ const create = async (req, res) => {
 // UPDATE de cuota
 actualizarCuota = async (req, res) => {
     const id = req.params.id;
-    const { socio, estado, actividad, fechaPago, tipo, valor } = req.body;
+    const { socio, actividad, tipo, valor } = req.body;
     console.log(id);
 
     let cuotaAct;
@@ -73,9 +71,7 @@ actualizarCuota = async (req, res) => {
             {
                 $set: {
                     socio: socio,
-                    estado: estado,
                     actividad: actividad,
-                    fechaPago: fechaPago,
                     tipo: tipo,
                     valor: valor
                 }

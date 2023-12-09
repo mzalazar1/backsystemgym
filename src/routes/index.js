@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const sociosRoutes = require("./socios");
-const estadosCuotasRoutes = require("./estadosCuotas");
 const actividadesRoutes = require("./actvidades");
 const valoresCuotasRoutes = require("./valoresCuotas");
 const pagosRoutes = require("./pagos");
@@ -17,7 +16,6 @@ const metodoPagosRoutes = require("./metodoPago")
 // => /api...
 router.use("/socios", sociosRoutes);
 router.use("/actividades", actividadesRoutes);
-router.use("/estadoscuota", estadosCuotasRoutes);
 router.use("/valorescuota", valoresCuotasRoutes);
 router.use("/pagos", pagosRoutes);
 router.use("/tiposcuota", tiposCuotasRoutes);
