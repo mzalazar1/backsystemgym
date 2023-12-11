@@ -34,16 +34,11 @@ const getCuotaById = (req, res) => {
 //POST
 
 const create = async (req, res) => {
+    const payload = req.body;
+    console.log("🚀 ~ file: cuotas.js:39 ~ create ~ payload:", payload)
 
-    const { id, socio, actividad, tipo, valor } = req.body;
+    const cuota = new Cuota(payload);
 
-    const cuota = new Cuota({
-        id,
-        socio,
-        actividad,
-        tipo,
-        valor
-    });
     let savedCuota;
     try {
         savedCuota = await cuota.save();
@@ -61,20 +56,15 @@ const create = async (req, res) => {
 // UPDATE de cuota
 actualizarCuota = async (req, res) => {
     const id = req.params.id;
-    const { socio, actividad, tipo, valor } = req.body;
-    console.log(id);
+    const payload = req.body;
+    console.log("🚀 ~ file: cuotas.js:59 ~ actualizarCuota= ~ payload:", payload)
 
     let cuotaAct;
     try {
         cuotaAct = await Cuota.updateOne(
             { "id": id },
             {
-                $set: {
-                    socio: socio,
-                    actividad: actividad,
-                    tipo: tipo,
-                    valor: valor
-                }
+                $set: payload
             }
         );
     }

@@ -7,7 +7,7 @@ const CuotasSchema = new Schema({
         type: Number,
         required: true,
     },
-    socio: {
+    socio: { // DNI
         type: String,
         required: true,
     },
@@ -19,7 +19,7 @@ const CuotasSchema = new Schema({
         type: String,
         required: true,
     },
-    valor: {
+    valor: { //
         type: Number,
         default: false,
     }

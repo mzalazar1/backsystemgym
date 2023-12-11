@@ -1,4 +1,6 @@
 const Socio = require("../models/socios");
+const Cuota = require("../models/cuotas");
+const { json } = require("express");
 
 const getStatus = (req, res) => {
     Socio.find()
@@ -113,6 +115,66 @@ const eliminarSoc = async (req, res) => {
     return res.json({ msg: `El socio borrado ${id}` });
 }
 
+//Controla acceso
+const accesoSocio = async (req, res) => {
+    const { socio } = req.body;
+
+    let foundCuota;
+    let resultAccess = false;
+
+    try {
+        // hacer un GET de mongoDB con filtro por DNI a la collection cuota
+        foundCuota = await Cuota.findOne({ socio }); // socio, es un DNI
+
+        if (foundCuota) {
+            const tipoCuotaValidadoMinuscula = foundCuota.tipo.toLowerCase();
+
+            // vamos a crear fecha de hoy antes porque la vamso a usar
+            const dateNow = new Date();
+
+            const calculateDate = (createdAt, days) => {
+
+                const dueDate = new Date(createdAt.setDate(createdAt.getDate() + days))
+
+                // devolvemos false para que no peuda acceder si ya se vencio.
+                const acceso = dueDate < dateNow ? false : true;
+                return acceso;
+            }
+
+
+
+            switch (tipoCuotaValidadoMinuscula) {
+                case "mensual":
+                    // aplicamos y devolvemo o true o false si tiene acceso
+                    resultAccess = calculateDate(foundCuota.created_at, 31);
+
+                case "trimestral":
+                    // aplicamos y devolvemo o true o false si tiene acceso
+                    resultAccess = calculateDate(foundCuota.created_at, 90);
+
+                case "semestral":
+                    // aplicamos y devolvemo o true o false si tiene acceso
+                    resultAccess = calculateDate(foundCuota.created_at, 120);
+
+                default:
+                    // aplicamos y devolvemo o true o false si tiene acceso
+                    resultAccess = calculateDate(foundCuota.created_at, 31);
+            }
+        }
+        else {
+            return res.json("not found")
+        }
+    }
+    catch (err) {
+        console.log("🚀 ~ file: socios.js:171 ~ accesoSocio ~ err:", err)
+        console.log(err);
+        res.status(500);
+        res.json({ msg: `Error Post: ${err}` });
+    }
+
+    return res.json(resultAccess);
+};
+
 
 module.exports = {
     getStatus,
@@ -121,4 +183,5 @@ module.exports = {
     create,
     actualizarSoc,
     eliminarSoc,
+    accesoSocio
 };
