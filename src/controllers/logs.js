@@ -107,8 +107,26 @@ const eliminarLog = async (req, res) => {
     return res.json({ msg: `El log fue borrado ${id}` });
 }
 
+// Controlador para manejar la creación de un nuevo log
+const crearLog = async (req, res) => {
+
+    const payload = req.body;
+    console.log("🚀 ~ file: logs.js:114 ~ crearLog ~ payload:", payload)
+
+    try {
+        const nuevoLog = new Log(payload);
+        const resultado = await nuevoLog.save();
+        const { accion, usuario } = resultado;
+        res.json({ accion, usuario });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al guardar el log' });
+    }
+};
+
 
 module.exports = {
+    crearLog,
     getStatus,
     getAll,
     getLogById,

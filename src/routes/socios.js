@@ -11,5 +11,4 @@ router.post("/", verifyToken, sociosControllers.create);
 router.delete("/:id", verifyToken, sociosControllers.eliminarSoc);
 router.put("/:id", verifyToken, sociosControllers.actualizarSoc);
 
-
 module.exports = router;
