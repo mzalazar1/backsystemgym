@@ -3,10 +3,6 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const PagosSchema = new Schema({
-    id: {
-        type: Number,
-        required: true,
-    },
     fecha: {
         type: String,
         required: true,

@@ -8,48 +8,59 @@ const getStatus = (req, res) => {
 
 // Devuelve todos los valoresCuotas
 const getAll = async (req, res) => {
-
     let valoresCuotas = [];
 
     try {
-        valoresCuotas = await ValorCuota.find({})
+        valoresCuotas = await ValorCuota.find({});
     } catch (error) {
         console.log(error);
         res.status(500);
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolv./models si no se entro al catch
-    res.json(valoresCuotas);
+    // Convertir ObjectId a cadena en cada valor de cuota
+    const valoresCuotasStringIds = valoresCuotas.map((valorCuota) => ({
+        ...valorCuota.toObject(),
+        _id: valorCuota._id.toString(),
+    }));
+
+    // solo devolvemos los valores de cuotas si no se entró al catch
+    res.json(valoresCuotasStringIds);
 };
 
 //GET by ID
-const getValorCuotaById = (req, res) => {
+const getValorCuotaById = async (req, res) => {
     const { ValorCuotaId } = req.params;
-    ValorCuota.find({ id: ValorCuotaId })
-        .then((data) => res.json({ data }))
-        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+    try {
+        const valorCuota = await ValorCuota.findById(ValorCuotaId);
+        if (!valorCuota) {
+            return res.status(404).json({ msg: 'Valor de cuota no encontrado' });
+        }
+
+        // Convertir ObjectId a cadena
+        const valorCuotaStringId = { ...valorCuota.toObject(), _id: valorCuota._id.toString() };
+        res.json({ data: valorCuotaStringId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error: ${err}` });
+    }
 }
 
 //POST
-
 const create = async (req, res) => {
-
     const payload = req.body;
 
     const valorCuota = new ValorCuota({ ...payload });
-    let ValorCuotaSocio;
+    let savedValorCuota;
     try {
-        ValorCuotaSocio = await valorCuota.save();
-    }
-    catch (err) {
+        savedValorCuota = await valorCuota.save();
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Post: ${err}` });
     }
 
-    res.json(ValorCuotaSocio);
-
+    res.json(savedValorCuota);
 };
 
 // UPDATE de ValorCuota
@@ -61,13 +72,12 @@ const actualizarValorCuota = async (req, res) => {
     let valorCuotaAct;
     try {
         valorCuotaAct = await ValorCuota.updateOne(
-            { "id": id },
+            { "_id": id },
             {
                 $set: { ...payload }
             }
         );
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Update: ${err}` });
@@ -81,21 +91,19 @@ const eliminarValorCuota = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await ValorCuota.deleteOne({ id });
+        response = await ValorCuota.deleteOne({ "_id": id });
         console.log(response);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro Valorcuota con id: ${id}` });
+        return res.json({ msg: `No se encontró valor de cuota con id: ${id}` });
     }
 
-    return res.json({ msg: `El valor cuota fue borrado ${id}` });
+    return res.json({ msg: `El valor de cuota fue borrado ${id}` });
 }
-
 
 module.exports = {
     getStatus,

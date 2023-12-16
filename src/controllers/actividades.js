@@ -19,54 +19,66 @@ const getAll = async (req, res) => {
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolvemos los actividades si no se entro al catch
-    res.json(actividades);
+    // Convertir ObjectId a cadena en cada actividad
+    const actividadesStringIds = actividades.map((actividad) => ({
+        ...actividad.toObject(),
+        _id: actividad._id.toString()
+    }));
+
+    // solo devolvemos los actividades si no se entró al catch
+    res.json(actividadesStringIds);
 };
 
 //GET by ID
-const getActividadById = (req, res) => {
+const getActividadById = async (req, res) => {
     const { ActividadId } = req.params;
-    Actividad.find({ id: ActividadId })
-        .then((data) => res.json({ data }))
-        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+    try {
+        const actividad = await Actividad.findById(ActividadId);
+        if (!actividad) {
+            return res.status(404).json({ msg: 'Actividad no encontrada' });
+        }
+
+        // Convertir ObjectId a cadena
+        const actividadStringId = { ...actividad.toObject(), _id: actividad._id.toString() };
+        res.json({ data: actividadStringId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error: ${err}` });
+    }
 }
 
 //POST
-
 const create = async (req, res) => {
-
-    const { id, nombre, horarios, profesor } = req.body;
+    const { nombre, horarios, profesor } = req.body;
 
     const actividad = new Actividad({
-        id,
         nombre,
         horarios,
         profesor
     });
+
     let ActividadSocio;
     try {
         ActividadSocio = await actividad.save();
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Post: ${err}` });
     }
 
     res.json(ActividadSocio);
-
 };
 
 // UPDATE de Actividad
 const actualizarActividad = async (req, res) => {
-    const id = req.params.id;
+    const id = req.params._id;
     const { nombre, horarios, profesor } = req.body;
     console.log(id);
 
     let ActividadAct;
     try {
         ActividadAct = await Actividad.updateOne(
-            { "id": id },
+            { "_id": id },
             {
                 $set: {
                     nombre: nombre,
@@ -75,8 +87,7 @@ const actualizarActividad = async (req, res) => {
                 }
             }
         );
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Update: ${err}` });
@@ -87,24 +98,22 @@ const actualizarActividad = async (req, res) => {
 
 // DELETE de Actividad
 const eliminarActividad = async (req, res) => {
-    const id = req.params.id;
+    const id = req.params._id;
     let response;
     try {
-        response = await Actividad.deleteOne({ id });
+        response = await Actividad.deleteOne({ "_id": id });
         console.log(response);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro actividad con id: ${id}` });
+        return res.json({ msg: `No se encontró actividad con id: ${id}` });
     }
 
     return res.json({ msg: `La actividad fue borrada ${id}` });
 }
-
 
 module.exports = {
     getStatus,

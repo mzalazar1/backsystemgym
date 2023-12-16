@@ -4,10 +4,6 @@ const { Schema } = mongoose;
 
 const CuotasSchema = new Schema(
     {
-        id: {
-            type: Number,
-            required: true,
-        },
         socio: {
             type: String,
             required: true,

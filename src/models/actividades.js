@@ -3,10 +3,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const ActividadesSchema = new Schema({
-    id: {
-        type: Number,
-        required: true,
-    },
+
     nombre: {
         type: String,
         required: true,

@@ -19,26 +19,41 @@ const getAll = async (req, res) => {
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolv./models si no se entro al catch
-    res.json(pagos);
+    // Convertir ObjectId a cadena en cada pago
+    const pagosStringIds = pagos.map((pago) => ({
+        ...pago.toObject(),
+        _id: pago._id.toString(),
+    }));
+
+    // solo devolvemos los pagos si no se entro al catch
+    res.json(pagosStringIds);
 };
 
 //GET by ID
-const getPagoById = (req, res) => {
+const getPagoById = async (req, res) => {
     const { PagoId } = req.params;
-    Pago.find({ id: PagoId })
-        .then((data) => res.json({ data }))
-        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+    try {
+        const pago = await Pago.findById(PagoId);
+        if (!pago) {
+            return res.status(404).json({ msg: 'Pago no encontrado' });
+        }
+
+        // Convertir ObjectId a cadena
+        const pagoStringId = { ...pago.toObject(), _id: pago._id.toString() };
+        res.json({ data: pagoStringId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error: ${err}` });
+    }
 }
 
 //POST
 
 const create = async (req, res) => {
 
-    const { id, fecha, importe, metodo } = req.body;
+    const { fecha, importe, metodo } = req.body;
 
     const pago = new Pago({
-        id,
         fecha,
         importe,
         metodo
@@ -66,7 +81,7 @@ const actualizarPago = async (req, res) => {
     let pagoAct;
     try {
         pagoAct = await Pago.updateOne(
-            { "id": id },
+            { "_id": id },
             {
                 $set: {
                     fecha: fecha,
@@ -90,7 +105,7 @@ const eliminarPago = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await Pago.deleteOne({ id });
+        response = await Pago.deleteOne({ "_id": id });
         console.log(response);
     }
     catch (err) {
@@ -104,7 +119,6 @@ const eliminarPago = async (req, res) => {
 
     return res.json({ msg: `El pago fue borrado ${id}` });
 }
-
 
 module.exports = {
     getStatus,

@@ -19,26 +19,41 @@ const getAll = async (req, res) => {
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolvemos los profesor si no se entro al catch
-    res.json(profesores);
+    // Convertir ObjectId a cadena en cada profesor
+    const profesoresStringIds = profesores.map((profesor) => ({
+        ...profesor.toObject(),
+        _id: profesor._id.toString(),
+    }));
+
+    // solo devolvemos los profesores si no se entro al catch
+    res.json(profesoresStringIds);
 };
 
 //GET by ID
-const getProfesorById = (req, res) => {
-    const { ProdesorId } = req.params;
-    Profesor.find({ id: ProdesorId })
-        .then((data) => res.json({ data }))
-        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+const getProfesorById = async (req, res) => {
+    const { ProfesorId } = req.params;
+    try {
+        const profesor = await Profesor.findById(ProfesorId);
+        if (!profesor) {
+            return res.status(404).json({ msg: 'Profesor no encontrado' });
+        }
+
+        // Convertir ObjectId a cadena
+        const profesorStringId = { ...profesor.toObject(), _id: profesor._id.toString() };
+        res.json({ data: profesorStringId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error: ${err}` });
+    }
 }
 
 //POST
 
 const create = async (req, res) => {
 
-    const { id, dni, name, lastname, tel, mail, fechaNac } = req.body;
+    const { dni, name, lastname, tel, mail, fechaNac } = req.body;
 
     const profesor = new Profesor({
-        id,
         dni,
         name,
         lastname,
@@ -69,7 +84,7 @@ const actualizarProf = async (req, res) => {
     let profesorAct;
     try {
         profesorAct = await Profesor.updateOne(
-            { "id": id },
+            { "_id": id },
             {
                 $set: {
                     dni: dni,
@@ -96,7 +111,7 @@ const eliminarProf = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await Profesor.deleteOne({ id });
+        response = await Profesor.deleteOne({ "_id": id });
         console.log(response);
     }
     catch (err) {
@@ -108,9 +123,8 @@ const eliminarProf = async (req, res) => {
         return res.json({ msg: `No se encontro profesor con id: ${id}` });
     }
 
-    return res.json({ msg: `El profesor borrado ${id}` });
+    return res.json({ msg: `El profesor fue borrado ${id}` });
 }
-
 
 module.exports = {
     getStatus,

@@ -19,31 +19,46 @@ const getAll = async (req, res) => {
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolv./models si no se entro al catch
-    res.json(metodos);
+    // Convertir ObjectId a cadena en cada método
+    const metodosStringIds = metodos.map((metodo) => ({
+        ...metodo.toObject(),
+        _id: metodo._id.toString(),
+    }));
+
+    // solo devolvemos los metodos si no se entro al catch
+    res.json(metodosStringIds);
 };
 
 //GET by ID
-const getMetById = (req, res) => {
+const getMetById = async (req, res) => {
     const { MetId } = req.params;
-    MetodoPago.find({ id: MetId })
-        .then((data) => res.json({ data }))
-        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+    try {
+        const metodo = await MetodoPago.findById(MetId);
+        if (!metodo) {
+            return res.status(404).json({ msg: 'Método no encontrado' });
+        }
+
+        // Convertir ObjectId a cadena
+        const metodoStringId = { ...metodo.toObject(), _id: metodo._id.toString() };
+        res.json({ data: metodoStringId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error: ${err}` });
+    }
 }
 
 //POST
 
 const create = async (req, res) => {
 
-    const { id, tipo } = req.body;
+    const { tipo } = req.body;
 
-    const metodos = new MetodoPago({
-        id,
+    const metodoPago = new MetodoPago({
         tipo
     });
-    let metodoPago;
+    let metodoPagoSaved;
     try {
-        metodoPago = await metodos.save();
+        metodoPagoSaved = await metodoPago.save();
     }
     catch (err) {
         console.log(err);
@@ -51,7 +66,7 @@ const create = async (req, res) => {
         res.json({ msg: `Error Post: ${err}` });
     }
 
-    res.json(metodoPago);
+    res.json(metodoPagoSaved);
 
 };
 
@@ -64,7 +79,7 @@ const actualizarMet = async (req, res) => {
     let metPag;
     try {
         metPag = await MetodoPago.updateOne(
-            { "id": id },
+            { "_id": id },
             {
                 $set: {
                     tipo: tipo,
@@ -86,7 +101,7 @@ const eliminarMet = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await MetodoPago.deleteOne({ id });
+        response = await MetodoPago.deleteOne({ "_id": id });
         console.log(response);
     }
     catch (err) {
@@ -95,10 +110,10 @@ const eliminarMet = async (req, res) => {
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro metodo con id: ${id}` });
+        return res.json({ msg: `No se encontro método con id: ${id}` });
     }
 
-    return res.json({ msg: `El metodo fue borrado ${id}` });
+    return res.json({ msg: `El método fue borrado ${id}` });
 }
 
 

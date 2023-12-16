@@ -3,10 +3,6 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const SociosSchema = new Schema({
-    id: {
-        type: Number,
-        required: true,
-    },
     dni: {
         type: String,
         required: true,

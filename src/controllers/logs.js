@@ -19,26 +19,41 @@ const getAll = async (req, res) => {
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolv./models si no se entro al catch
-    res.json(logs);
+    // Convertir ObjectId a cadena en cada log
+    const logsStringIds = logs.map((log) => ({
+        ...log.toObject(),
+        _id: log._id.toString(),
+    }));
+
+    // solo devolvemos los logs si no se entro al catch
+    res.json(logsStringIds);
 };
 
 //GET by ID
-const getLogById = (req, res) => {
+const getLogById = async (req, res) => {
     const { LogId } = req.params;
-    Log.find({ id: LogId })
-        .then((data) => res.json({ data }))
-        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+    try {
+        const log = await Log.findById(LogId);
+        if (!log) {
+            return res.status(404).json({ msg: 'Log no encontrado' });
+        }
+
+        // Convertir ObjectId a cadena
+        const logStringId = { ...log.toObject(), _id: log._id.toString() };
+        res.json({ data: logStringId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error: ${err}` });
+    }
 }
 
 //POST
 
 const create = async (req, res) => {
 
-    const { id, accion, usuario, fecha, hora } = req.body;
+    const { accion, usuario, fecha, hora } = req.body;
 
     const log = new Log({
-        id,
         accion,
         usuario,
         fecha,
@@ -67,7 +82,7 @@ const actualizarLog = async (req, res) => {
     let logAct;
     try {
         logAct = await Log.updateOne(
-            { "id": id },
+            { "_id": id },
             {
                 $set: {
                     accion: accion,
@@ -92,7 +107,7 @@ const eliminarLog = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await Log.deleteOne({ id });
+        response = await Log.deleteOne({ "_id": id });
         console.log(response);
     }
     catch (err) {

@@ -8,52 +8,63 @@ const getStatus = (req, res) => {
 
 // Devuelve todos los tiposCuotas
 const getAll = async (req, res) => {
-
     let tiposCuotas = [];
 
     try {
-        tiposCuotas = await TipoCuota.find({})
+        tiposCuotas = await TipoCuota.find({});
     } catch (error) {
         console.log(error);
         res.status(500);
         res.json({ msg: `Error: ${error}` });
     }
 
-    // solo devolv./models si no se entro al catch
-    res.json(tiposCuotas);
+    // Convertir ObjectId a cadena en cada tipo de cuota
+    const tiposCuotasStringIds = tiposCuotas.map((tipoCuota) => ({
+        ...tipoCuota.toObject(),
+        _id: tipoCuota._id.toString(),
+    }));
+
+    // solo devolvemos los tipos de cuotas si no se entró al catch
+    res.json(tiposCuotasStringIds);
 };
 
 //GET by ID
-const getTipoCuotaById = (req, res) => {
+const getTipoCuotaById = async (req, res) => {
     const { TipoCuotaId } = req.params;
-    TipoCuota.find({ id: TipoCuotaId })
-        .then((data) => res.json({ data }))
-        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+    try {
+        const tipoCuota = await TipoCuota.findById(TipoCuotaId);
+        if (!tipoCuota) {
+            return res.status(404).json({ msg: 'Tipo de cuota no encontrado' });
+        }
+
+        // Convertir ObjectId a cadena
+        const tipoCuotaStringId = { ...tipoCuota.toObject(), _id: tipoCuota._id.toString() };
+        res.json({ data: tipoCuotaStringId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error: ${err}` });
+    }
 }
 
 //POST
-
 const create = async (req, res) => {
-
     const { id, tipo, importe } = req.body;
 
-    const TiposCuota = new TipoCuota({
+    const tipoCuota = new TipoCuota({
         id,
         tipo,
-        importe
+        importe,
     });
-    let TipoCuotaSocio;
+    let savedTipoCuota;
     try {
-        TipoCuotaSocio = await TiposCuota.save();
-    }
-    catch (err) {
+        savedTipoCuota = await tipoCuota.save();
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Post: ${err}` });
     }
 
-    res.json(TipoCuotaSocio);
-
+    res.json(savedTipoCuota);
 };
 
 // UPDATE de TipoCuota
@@ -62,25 +73,24 @@ const actualizarTipoCuota = async (req, res) => {
     const { tipo, importe } = req.body;
     console.log(id);
 
-    let TipoCuotaAct;
+    let tipoCuotaAct;
     try {
-        TipoCuotaAct = await TipoCuota.updateOne(
-            { "id": id },
+        tipoCuotaAct = await TipoCuota.updateOne(
+            { "_id": id },
             {
                 $set: {
                     tipo: tipo,
-                    importe: importe
-                }
+                    importe: importe,
+                },
             }
         );
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Update: ${err}` });
     }
 
-    res.json(TipoCuotaAct);
+    res.json(tipoCuotaAct);
 };
 
 // DELETE de TipoCuota
@@ -88,21 +98,19 @@ const eliminarTipoCuota = async (req, res) => {
     const id = req.params.id;
     let response;
     try {
-        response = await TipoCuota.deleteOne({ id });
+        response = await TipoCuota.deleteOne({ "_id": id });
         console.log(response);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Delete: ${err}` });
     }
     if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro tipocuota con id: ${id}` });
+        return res.json({ msg: `No se encontró tipo de cuota con id: ${id}` });
     }
 
-    return res.json({ msg: `El tipocuota fue borrado ${id}` });
+    return res.json({ msg: `El tipo de cuota fue borrado ${id}` });
 }
-
 
 module.exports = {
     getStatus,

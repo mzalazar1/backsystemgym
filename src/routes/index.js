@@ -12,6 +12,7 @@ const logsRoutes = require("./logs");
 const rolesRoutes = require("./roles");
 const profesoresRoutes = require("./profesores");
 const metodoPagosRoutes = require("./metodoPago")
+const estadosCuotasRoutes = require("./estadosCuotas");
 
 const accesoSocios = require("./accesos");
 
@@ -28,6 +29,7 @@ router.use("/logs", logsRoutes);
 router.use("/roles", rolesRoutes);
 router.use("/profesores", profesoresRoutes);
 router.use("/metodospagos", metodoPagosRoutes);
+router.use("/estadoscuotas", estadosCuotasRoutes);
 
 
 module.exports = router;

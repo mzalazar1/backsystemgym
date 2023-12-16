@@ -2,13 +2,9 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const RolesSchema = new Schema({
+const EstadosCuotasSchema = new Schema({
 
-    usuario: {
-        type: String,
-        required: true,
-    },
-    rol: {
+    estado: {
         type: String,
         required: true,
     }
@@ -16,4 +12,4 @@ const RolesSchema = new Schema({
     ,
     { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } });
 
-module.exports = mongoose.model("Rol", RolesSchema);
+module.exports = mongoose.model("EstadoCuota", EstadosCuotasSchema);

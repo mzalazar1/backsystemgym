@@ -8,101 +8,85 @@ const getStatus = (req, res) => {
 
 // Devuelve todos los Roles
 const getAll = async (req, res) => {
-
-    let roles = [];
-
     try {
-        roles = await Rol.find({})
+        const roles = await Rol.find({});
+        res.json(roles);
     } catch (error) {
         console.log(error);
         res.status(500);
         res.json({ msg: `Error: ${error}` });
     }
-
-    // solo devolv./models si no se entro al catch
-    res.json(roles);
 };
 
 //GET by ID
-const getRolById = (req, res) => {
+const getRolById = async (req, res) => {
     const { RolId } = req.params;
-    Rol.find({ id: RolId })
-        .then((data) => res.json({ data }))
-        .catch((err) => res.status(500).json({ msg: `Error: ${err}` }));
+    try {
+        const rol = await Rol.findById(RolId);
+        if (!rol) {
+            return res.status(404).json({ msg: 'Rol no encontrado' });
+        }
+        res.json({ data: rol });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error: ${err.message}` });
+    }
 }
 
 //POST
-
 const create = async (req, res) => {
-
-    const { id, usuario, rol } = req.body;
+    const { usuario, rol } = req.body;
 
     const roles = new Rol({
-        id,
         usuario,
         rol
     });
-    let rolUsuario;
+
     try {
-        rolUsuario = await roles.save();
-    }
-    catch (err) {
+        const rolUsuario = await roles.save();
+        res.json(rolUsuario);
+    } catch (err) {
         console.log(err);
         res.status(500);
         res.json({ msg: `Error Post: ${err}` });
     }
-
-    res.json(rolUsuario);
-
 };
 
 // UPDATE de Rol
 const actualizarRol = async (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
     const { usuario, rol } = req.body;
-    console.log(id);
 
-    let rolAct;
     try {
-        rolAct = await Rol.updateOne(
-            { "id": id },
-            {
-                $set: {
-                    usuario: usuario,
-                    rol: rol
-                }
-            }
-        );
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-        res.json({ msg: `Error Update: ${err}` });
-    }
+        const rolAct = await Rol.findByIdAndUpdate(id, {
+            usuario,
+            rol
+        }, { new: true });
 
-    res.json(rolAct);
+        res.json(rolAct);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error Update: ${err.message}` });
+    }
 };
 
 // DELETE de Rol
 const eliminarRol = async (req, res) => {
-    const id = req.params.id;
-    let response;
+    const { id } = req.params;
+
     try {
-        response = await Rol.deleteOne({ id });
-        console.log(response);
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-        res.json({ msg: `Error Delete: ${err}` });
-    }
-    if (response.deletedCount === 0) {
-        return res.json({ msg: `No se encontro rol con id: ${id}` });
-    }
+        const response = await Rol.findByIdAndDelete(id);
 
-    return res.json({ msg: `El rol fue borrado ${id}` });
+        if (!response) {
+            return res.json({ msg: `No se encontró rol con id: ${id}` });
+        }
+
+        res.json({ msg: `El rol fue borrado ${id}` });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: `Error Delete: ${err.message}` });
+    }
 }
-
 
 module.exports = {
     getStatus,
