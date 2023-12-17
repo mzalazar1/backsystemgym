@@ -48,12 +48,10 @@ const getTipoCuotaById = async (req, res) => {
 
 //POST
 const create = async (req, res) => {
-    const { id, tipo, importe } = req.body;
+    const { tipo } = req.body;
 
     const tipoCuota = new TipoCuota({
-        id,
-        tipo,
-        importe,
+        tipo
     });
     let savedTipoCuota;
     try {
@@ -70,7 +68,7 @@ const create = async (req, res) => {
 // UPDATE de TipoCuota
 const actualizarTipoCuota = async (req, res) => {
     const id = req.params.id;
-    const { tipo, importe } = req.body;
+    const { tipo } = req.body;
     console.log(id);
 
     let tipoCuotaAct;
@@ -80,7 +78,6 @@ const actualizarTipoCuota = async (req, res) => {
             {
                 $set: {
                     tipo: tipo,
-                    importe: importe,
                 },
             }
         );
@@ -96,6 +93,7 @@ const actualizarTipoCuota = async (req, res) => {
 // DELETE de TipoCuota
 const eliminarTipoCuota = async (req, res) => {
     const id = req.params.id;
+    console.log("🚀 ~ file: tiposCuotas.js:96 ~ eliminarTipoCuota ~ req.params.id;:", req.params.id)
     let response;
     try {
         response = await TipoCuota.deleteOne({ "_id": id });

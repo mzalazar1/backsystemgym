@@ -12,7 +12,7 @@ const getAll = async (req, res) => {
   let socios = [];
 
   try {
-    socios = await Socio.find({}, { isDeleted: 0, __v: 0, _id: 0 });
+    socios = await Socio.find({}, { __v: 0 });
   } catch (error) {
     console.log(error);
     res.status(500);
@@ -102,7 +102,7 @@ const eliminarSoc = async (req, res) => {
   const id = req.params.id;
   let response;
   try {
-    response = await Socio.deleteOne({ id });
+    response = await Socio.deleteOne({ "_id": id });
     console.log(response);
   } catch (err) {
     console.log(err);
