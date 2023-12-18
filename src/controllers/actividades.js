@@ -71,7 +71,7 @@ const create = async (req, res) => {
 
 // UPDATE de Actividad
 const actualizarActividad = async (req, res) => {
-    const id = req.params._id;
+    const id = req.params.id;
     const { nombre, horarios, profesor } = req.body;
     console.log(id);
 
@@ -98,7 +98,7 @@ const actualizarActividad = async (req, res) => {
 
 // DELETE de Actividad
 const eliminarActividad = async (req, res) => {
-    const id = req.params._id;
+    const id = req.params.id;
     let response;
     try {
         response = await Actividad.deleteOne({ "_id": id });
