@@ -51,10 +51,10 @@ const getPagoById = async (req, res) => {
 
 const create = async (req, res) => {
 
-    const { fecha, importe, metodo } = req.body;
+    const { dni, importe, metodo } = req.body;
 
     const pago = new Pago({
-        fecha,
+        dni,
         importe,
         metodo
     });
@@ -75,7 +75,7 @@ const create = async (req, res) => {
 // UPDATE de Pago
 const actualizarPago = async (req, res) => {
     const id = req.params.id;
-    const { fecha, importe, metodo } = req.body;
+    const { dni, importe, metodo } = req.body;
     console.log(id);
 
     let pagoAct;
@@ -84,7 +84,7 @@ const actualizarPago = async (req, res) => {
             { "_id": id },
             {
                 $set: {
-                    fecha: fecha,
+                    dni: dni,
                     importe: importe,
                     metodo: metodo
                 }

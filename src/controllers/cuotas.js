@@ -12,7 +12,7 @@ const getAll = async (req, res) => {
 
   try {
     cuotas = await Cuota.find({});
-    console.log("🚀 ~ file: cuotas.js:15 ~ getAll ~ cuotas:", cuotas)
+    console.log("🚀 ~ file: cuotas.js:15 ~ getAll ~ cuotas:", cuotas);
   } catch (error) {
     console.log(error);
     res.status(500);
@@ -35,7 +35,7 @@ const getCuotaById = async (req, res) => {
   try {
     const cuota = await Cuota.findById(CuotaId);
     if (!cuota) {
-      return res.status(404).json({ msg: 'Cuota no encontrada' });
+      return res.status(404).json({ msg: "Cuota no encontrada" });
     }
 
     // Convertir ObjectId a cadena
@@ -55,6 +55,7 @@ const create = async (req, res) => {
   const cuota = new Cuota(payload);
 
   let savedCuota;
+
   try {
     savedCuota = await cuota.save();
   } catch (err) {
@@ -74,7 +75,7 @@ actualizarCuota = async (req, res) => {
   let cuotaAct;
   try {
     cuotaAct = await Cuota.findOneAndUpdate(
-      { "_id": id },
+      { _id: id },
       { $set: payload },
       { returnDocument: "after" }
     );
@@ -92,7 +93,7 @@ const eliminarCuota = async (req, res) => {
   const id = req.params.id;
   let response;
   try {
-    response = await Cuota.deleteOne({ "_id": id });
+    response = await Cuota.deleteOne({ _id: id });
     console.log(response);
   } catch (err) {
     console.log(err);

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const PagosSchema = new Schema({
-    fecha: {
+    dni: {
         type: String,
         required: true,
     },
