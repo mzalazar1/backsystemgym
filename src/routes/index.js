@@ -14,7 +14,7 @@ const profesoresRoutes = require("./profesores");
 const metodoPagosRoutes = require("./metodoPago")
 const estadosCuotasRoutes = require("./estadosCuotas");
 const asistenciasRoutes = require("./asistencias");
-
+const descuentosRoutes = require("./descuentos");
 
 const accesoSocios = require("./accesos");
 
@@ -33,7 +33,7 @@ router.use("/profesores", profesoresRoutes);
 router.use("/metodospagos", metodoPagosRoutes);
 router.use("/estadoscuotas", estadosCuotasRoutes);
 router.use("/asistencias", asistenciasRoutes);
-
+router.use("/descuentos", descuentosRoutes);
 
 
 module.exports = router;

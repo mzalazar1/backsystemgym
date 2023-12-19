@@ -1,5 +1,7 @@
 const Socio = require("../models/socios");
 const Cuota = require("../models/cuotas");
+const { agregarAsistencia } = require("./asistencias");
+const calculateDateAccess = require("../utils/calculateDateAccess");
 
 const getStatus = (req, res) => {
   Socio.find()
@@ -47,7 +49,6 @@ const create = async (req, res) => {
   const { dni, name, lastname, tel, mail, fechaNac } = req.body;
 
   const socio = new Socio({
-
     dni,
     name,
     lastname,
@@ -118,47 +119,48 @@ const eliminarSoc = async (req, res) => {
 
 //Controla acceso
 const accesoSocio = async (req, res) => {
-  const { socio } = req.body;
+  const { socio: dni } = req.body; // asignamos un alias mas personalizado
 
+  let foundSocio;
   let foundCuota;
   let resultAccess = false;
 
   try {
-    foundCuota = await Cuota.findOne({ socio });
+    foundSocio = await Socio.findOne({ dni });
+    if (!foundSocio) {
+      return res.json("dni not found");
+    }
+
+  } catch (error) {
+    console.log("🚀 ~ file: socios.js:135 ~ accesoSocio ~ error:", error)
+  }
+
+
+  try {
+    foundCuota = await Cuota.findOne({ socio: dni }).sort({ created_at: 1 }).exec();
 
     if (foundCuota) {
       const tipoCuotaValidadoMinuscula = foundCuota.tipo.toLowerCase();
 
-      // vamos a crear fecha de hoy antes porque la vamso a usar
-      const dateNow = new Date();
-
-      const calculateDate = (createdAt, days) => {
-        const dueDate = new Date(createdAt.setDate(createdAt.getDate() + days));
-
-        // devolvemos false para que no pueda acceder si ya se venció.
-        const acceso = dueDate < dateNow ? false : true;
-        return acceso;
-      };
-
       switch (tipoCuotaValidadoMinuscula) {
         case "mensual":
           // aplicamos y devolvemos true o false si tiene acceso
-          resultAccess = calculateDate(foundCuota.created_at, 31);
+          resultAccess = calculateDateAccess(foundCuota.created_at, 31);
 
         case "trimestral":
           // aplicamos y devolvemos true o false si tiene acceso
-          resultAccess = calculateDate(foundCuota.created_at, 90);
+          resultAccess = calculateDateAccess(foundCuota.created_at, 90);
 
         case "semestral":
           // aplicamos y devolvemos true o false si tiene acceso
-          resultAccess = calculateDate(foundCuota.created_at, 120);
+          resultAccess = calculateDateAccess(foundCuota.created_at, 120);
 
         default:
           // aplicamos y devolvemo o true o false si tiene acceso
-          resultAccess = calculateDate(foundCuota.created_at, 31);
+          resultAccess = calculateDateAccess(foundCuota.created_at, 31);
       }
     } else {
-      return res.json("not found");
+      return res.json("cuota not found");
     }
   } catch (err) {
     console.log("🚀 ~ file: socios.js:171 ~ accesoSocio ~ err:", err);
@@ -167,7 +169,13 @@ const accesoSocio = async (req, res) => {
     res.json({ msg: `Error Post: ${err}` });
   }
 
-  return res.json(resultAccess);
+  //Verificamos que el socio que se registra tiene cuota vigente solo si resultAccess es TRUE 
+  if (resultAccess.acceso) {
+    // REGISTRAR UN EVENTO DE ACCESO USANDO ESTE "SERVICIO"
+    agregarAsistencia(dni)
+  }
+
+  return res.json(resultAccess.acceso);
 };
 
 module.exports = {

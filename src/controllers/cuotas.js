@@ -12,6 +12,7 @@ const getAll = async (req, res) => {
 
   try {
     cuotas = await Cuota.find({});
+    console.log("🚀 ~ file: cuotas.js:15 ~ getAll ~ cuotas:", cuotas)
   } catch (error) {
     console.log(error);
     res.status(500);

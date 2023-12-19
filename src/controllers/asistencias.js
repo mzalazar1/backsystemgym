@@ -1,3 +1,4 @@
+const Socio = require("../models/socios");
 const Asistencia = require("../models/asistencias");
 
 const getStatus = (req, res) => {
@@ -49,12 +50,12 @@ const getAsistenciaById = async (req, res) => {
 
 //POST
 const create = async (req, res) => {
-    const { dni, nombre, apellido, estadoCuota, fecha } = req.body;
+    const { dni, name, lastname, estadoCuota, fecha } = req.body;
 
     const asistencia = new Asistencia({
         dni,
-        nombre,
-        apellido,
+        name,
+        lastname,
         estadoCuota,
         fecha
     });
@@ -74,7 +75,7 @@ const create = async (req, res) => {
 // UPDATE de Asistencia
 const actualizarAsistencia = async (req, res) => {
     const id = req.params.id;
-    const { dni, nombre, apellido, estadoCuota, fecha } = req.body;
+    const { dni, name, lastname, estadoCuota, fecha } = req.body;
     console.log(id);
 
     let AsistenciaAct;
@@ -84,8 +85,8 @@ const actualizarAsistencia = async (req, res) => {
             {
                 $set: {
                     dni: dni,
-                    nombre: nombre,
-                    apellido: apellido,
+                    name: name,
+                    lastname: lastname,
                     estadoCuota: estadoCuota,
                     fecha: fecha
                 }
@@ -119,6 +120,34 @@ const eliminarAsistencia = async (req, res) => {
     return res.json({ msg: `La asistencia fue borrada ${id}` });
 }
 
+
+// SERVICIO > Crear la asistencia con la información del socio
+const agregarAsistencia = async (dni) => {
+    try {
+
+        // Buscar al socio por el DNI
+        const socio = await Socio.findOne({ dni });
+
+        if (!socio) {
+            // Si no se encuentra al socio, puedes manejarlo como desees
+            return res.status(404).json({ message: 'Socio no encontrado' });
+        }
+
+        // Crear la asistencia con la información del socio
+        const asistencia = new Asistencia({
+            dni,
+            name: socio.name,
+            lastname: socio.lastname
+        });
+
+        // Guardar la asistencia en la base de datos
+        await asistencia.save();
+    } catch (error) {
+        console.error('Error al agregar asistencia:', error);
+    }
+};
+
+
 module.exports = {
     getStatus,
     getAll,
@@ -126,4 +155,5 @@ module.exports = {
     create,
     actualizarAsistencia,
     eliminarAsistencia,
+    agregarAsistencia
 };

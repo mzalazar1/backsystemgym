@@ -35,10 +35,9 @@ const getRolById = async (req, res) => {
 
 //POST
 const create = async (req, res) => {
-    const { usuario, rol } = req.body;
+    const { rol } = req.body;
 
     const roles = new Rol({
-        usuario,
         rol
     });
 
@@ -55,11 +54,10 @@ const create = async (req, res) => {
 // UPDATE de Rol
 const actualizarRol = async (req, res) => {
     const { id } = req.params;
-    const { usuario, rol } = req.body;
+    const { rol } = req.body;
 
     try {
         const rolAct = await Rol.findByIdAndUpdate(id, {
-            usuario,
             rol
         }, { new: true });
 

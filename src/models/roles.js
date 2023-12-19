@@ -4,10 +4,6 @@ const { Schema } = mongoose;
 
 const RolesSchema = new Schema({
 
-    usuario: {
-        type: String,
-        required: true,
-    },
     rol: {
         type: String,
         required: true,
